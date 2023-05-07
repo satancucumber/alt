@@ -30,6 +30,10 @@ public class LiteralController {
     public Literal create(@RequestBody Literal literal) {
         return literalRepo.save(literal);
     }
+    @PostMapping("/list")
+    public List<Literal> createAll(@RequestBody List<Literal> literals) {
+        return literalRepo.saveAll(literals);
+    }
     @PutMapping("{id}")
     public Literal update(
             @PathVariable("id") Literal literalFromDb,

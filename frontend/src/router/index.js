@@ -16,8 +16,23 @@ const router = new VueRouter({
         },
         {
             path: '/literal',
-            name: constructor,
-            component: () => import('../components/LiteralView.vue'),
+            component: () => import('../components/LiteralFormView.vue'),
+        },
+        {
+            path: '/formula',
+            component: () => import('../components/FormulaFormView.vue'),
+        },
+        {
+            path: '/text',
+            component: () => import('../components/TextFormView.vue'),
+        },
+        {
+            path: '/img',
+            component: () => import('../components/ImgFormView.vue'),
+        },
+        {
+            path: '/canvas',
+            component: () => import('../components/CanvasView.vue'),
         },
     ]
 })

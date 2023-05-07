@@ -31,14 +31,28 @@ public class Formula {
     @ManyToOne(optional=false, cascade=CascadeType.ALL)
     @JoinColumn (name="plot_id")
     private Plot plot;
-    private String logform;
-    private String desform;
+//    private String logform;
+//    private String desform;
+
 
     public List<String> getOperators() {
         return operators;
     }
 
+    /*
+        operators: [ '*', '=>', '(', '(', '!', '*', '<=>', '*', ')', '&', '!', '(', '*', '|', '*', ')', ')' ]
+        tree:
+                                           =>
+                                       *        &
+                                            <=>     !
+                                           !   *    |
+                                           *       * *
+        operators: [ =>, *, &, <=>, !, *, *, !, |, *, * ]
+     */
     public void setOperators(List<String> operators) {
+        List<String> list = operators;
+        Map<String, List<String>> tree = new HashMap<String, List<String>>();
+
         this.operators = operators;
     }
 
