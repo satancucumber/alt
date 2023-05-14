@@ -1,7 +1,5 @@
 package LETI.alt.Logical;
 
-import LETI.alt.models.Formula;
-
 public class Operator {
     private String name;
     private String description;
@@ -50,7 +48,6 @@ public class Operator {
             out = out.replaceFirst("\\*", formulas[1]);
             return out;
         }
-
     }
 
     public String toString(String... formulas) {

@@ -32,6 +32,7 @@ public class FormulaController {
     public String getDesForm(@PathVariable("id") Formula formula) {return formula.getDesform();}
     @PostMapping
     public Formula create(@RequestBody Formula formula) {
+        formula.setOperators(formula.toPolish());         // Перевод в прямую польскую запись
         return formulaRepo.save(formula);
     }
     @PutMapping("{id}")

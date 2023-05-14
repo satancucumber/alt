@@ -40,19 +40,50 @@ public class Formula {
     }
 
     /*
-        operators: [ '*', '=>', '(', '(', '!', '*', '<=>', '*', ')', '&', '!', '(', '*', '|', '*', ')', ')' ]
+        (A&B)|C
+        operators: [(, *, &, *, ), |, *]
+
+        operators: [ '*', '=>', '(', '(', '!', '*', '<=>', '*', ')', '&', '!', '(', '*', '|', '(', '*', '&', '*', ')', ')', ')' ]
         tree:
                                            =>
                                        *        &
                                             <=>     !
                                            !   *    |
-                                           *       * *
-        operators: [ =>, *, &, <=>, !, *, *, !, |, *, * ]
-     */
-    public void setOperators(List<String> operators) {
-        List<String> list = operators;
-        Map<String, List<String>> tree = new HashMap<String, List<String>>();
+                                           *      *   &
+                                                     * *
 
+        operators: [ =>, *, &, <=>, !, *, *, !, |, &, *, * ]
+        [=>, *, &, <=>, !, *, *, !, |, *, &, *, *]
+     */
+    public List<String> toPolish() {
+        List<String> l = new ArrayList<String>();
+        Stack<String> r = new Stack<String>();
+        for (String operator : this.operators) {
+            r.push(operator);
+        }
+        Stack<String> s = new Stack<String>();
+        String item;
+        while (r.size() != 0) {
+            item = r.pop();
+            if (item.equals("(")) {
+                String operator = s.pop();
+                while (!operator.equals(")")) {
+                    l.add(operator);
+                    operator = s.pop();
+                }
+            } else if (item.equals("*") | item.equals("!")) {
+                l.add(item);
+            } else {
+                s.push(item);
+            }
+        }
+        while (s.size() != 0) {
+            l.add(s.pop());
+        }
+        Collections.reverse(l);  // Если убрать получится обратная польская запись
+        return l;
+    }
+    public void setOperators(List<String> operators) {
         this.operators = operators;
     }
 
@@ -95,6 +126,9 @@ public class Formula {
                 s.push(this.literals.get(k++).getName());
             }
         }
+        /*
+            s = ["C", "B", "A", "&", "=>"]
+         */
         Stack<String> l = new Stack<String>();
         while (s.size() != 0) {
             if (s.peek().equals("!")) {
