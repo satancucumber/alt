@@ -26,7 +26,12 @@ export default {
       canvas: null,
       x: null,
       y: null,
-
+      triangle: {
+        x1: null,
+        y1: null,
+        x2: null,
+        y2: null,
+      }
     }
   },
   methods: {

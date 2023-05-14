@@ -91,6 +91,7 @@
                 }
             },
             clean() {
+                document.getElementById("form").style.display = "none";
                 this.id = null;
                 this.name = '',
                 this.description = '',
@@ -111,7 +112,7 @@
                 };
                 if (this.id) {
                     var index = this.getIndex(this.literals, this.id);
-                    this.literals = this.literals[index].splice(index, 1, literal);
+                    this.literals.splice(index, 1, literal);
                     this.put_text('Изменено');
                 } else {
                     this.setId(literal, this.mid++);

@@ -1,17 +1,6 @@
 <template>
     <div>
         <h2>Формулы</h2>
-        <div v-for="formula in formulas" v-bind:key="formula.id">
-            <b-row>
-                <b-col>
-                    {{ formula.formula }}
-                </b-col>
-                <b-col>
-                    <b-button variant="primary" @click="edit(formula.id)">Изменить</b-button>
-                    <b-button variant="primary" @click="del_row(formula.id)">Удалить</b-button>
-                </b-col>
-            </b-row>
-        </div>
         <vue-good-table
             :columns="columns"
             :rows="formulas"
@@ -32,7 +21,7 @@
         <div id="form">
             <b-row>
                 <b-col sm="3">
-                    <b-form-input
+                    <b-form-input readonly
                         v-model="formula"
                     ></b-form-input>
                 </b-col>
@@ -136,14 +125,15 @@
             },
             del_symbol() {
                 if(this.last_symbol != '') {
+                    var index = this.formula.lastIndexOf(this.last_symbol);
                     if(this.last_symbol == this.operators[this.operators.length - 1]) {
-                        this.formula = this.formula.replace(this.last_symbol, '');
                         this.operators.pop();
                     } else {
-                        this.formula = this.formula.replace(new RegExp(this.last_symbol + '$'), '');
+                        this.formula = this.formula.substring(0, index);
                         this.literals.pop();
                         this.operators.pop();
                     }
+                    this.formula = this.formula.substring(0, index);
                     this.update_last_symbol()
                 }
 
@@ -165,14 +155,6 @@
                 this.operators = [];
                 this.literals = [];
             },
-            replace(formula) {
-                var index = this.getIndex(this.formulas, formula.id);
-                this.formulas = this.formulas[index].splice(index, 1, formula);
-            },
-            append(formula) {
-                formula.id = this.mid++;
-                this.formulas.push(formula);
-            },
             save() {
                 var formula = {
                     id: this.id,
@@ -181,15 +163,14 @@
                     literals: this.literals,
                     formula: this.formula
                 };
-                if (formula.id) {
-                    this.replace(formula).then(() => {
-                        this.clean()
-                    });
+                if (this.id) {
+                    var index = this.getIndex(this.formulas, this.id);
+                    this.formulas.splice(index, 1, formula);
                 } else {
-                    this.append(formula).then(() => {
-                        this.clean()
-                    });
+                    formula.id = this.mid++;
+                    this.formulas.push(formula);
                 }
+                this.clean()
             },
             edit(id) {
                 var index = this.getIndex(this.formulas, id);
@@ -199,14 +180,9 @@
                 this.operators = this.formulas[index].operators;
                 this.literals = this.formulas[index].literals;
             },
-            del(id) {
-                var index = this.getIndex(this.formulas, id);
-                this.formulas = this.formulas[index].splice(index, 1);
-            },
             del_row(id) {
-                this.del(id).then(() => {
-                    this.clean()
-                });
+                var index = this.getIndex(this.formulas, id);
+                this.formulas.splice(index, 1);
             }
         }
     };

@@ -8,13 +8,13 @@ import VueGoodTablePlugin from 'vue-good-table'
 import 'vue-good-table/dist/vue-good-table.css'
 Vue.use(VueGoodTablePlugin)
 
-//import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-//
-//import 'bootstrap/dist/css/bootstrap.css'
-//import 'bootstrap-vue/dist/bootstrap-vue.css'
-//
-//Vue.use(BootstrapVue)
-//Vue.use(IconsPlugin)
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
 
 Vue.use(http, {
     baseUrl: "http://localhost:8080/api/v1"
