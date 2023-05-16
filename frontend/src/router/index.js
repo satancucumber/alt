@@ -15,6 +15,10 @@ const router = new VueRouter({
             component: Home
         },
         {
+            path: '/plot',
+            component: () => import('../components/PlotView.vue'),
+        },
+        {
             path: '/literal',
             component: () => import('../components/LiteralFormView.vue'),
         },

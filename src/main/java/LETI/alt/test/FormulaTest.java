@@ -23,7 +23,7 @@ public class FormulaTest {
     {
         System.out.println("======TEST ONE EXECUTED=======");
         Formula formula = new Formula();
-        List<String> list = Arrays.asList("*", "=>", "(", "(", "!", "*", "<=>", "*", ")", "&", "!", "(", "*", "|", "(", "*", "&", "*", ")", ")", ")");
+        List<String> list = Arrays.asList("(", "*", "&", "*", ")", "=>", "*");
         System.out.println(list);
         formula.setOperators(list);
         System.out.println(formula.getOperators());

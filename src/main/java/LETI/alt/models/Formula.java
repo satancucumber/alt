@@ -53,7 +53,6 @@ public class Formula {
                                                      * *
 
         operators: [ =>, *, &, <=>, !, *, *, !, |, &, *, * ]
-        [=>, *, &, <=>, !, *, *, !, |, *, &, *, *]
      */
     public List<String> toPolish() {
         List<String> l = new ArrayList<String>();
