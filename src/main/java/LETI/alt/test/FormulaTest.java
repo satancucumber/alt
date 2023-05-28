@@ -23,14 +23,52 @@ public class FormulaTest {
     {
         System.out.println("======TEST ONE EXECUTED=======");
         Formula formula = new Formula();
-        List<String> list = Arrays.asList("(", "*", "&", "*", ")", "=>", "*");
+        List<String> list = Arrays.asList("(", "*", "&", "(", "*", "=>", "!", "*", ")", ")", "=>", "*");
         System.out.println(list);
         formula.setOperators(list);
         System.out.println(formula.getOperators());
         System.out.println(formula.toPolish());
     }
 
-//    @Tag("LOGFORM")
+    @Tag("IMPLICATION")
+    @Test
+    void testSimImplication()
+    {
+        System.out.println("======TEST TWO EXECUTED=======");
+        Formula formula = new Formula();
+        List<String> list = Arrays.asList("=>", "&", "*", "=>", "*", "!", "*", "*");
+        System.out.println(list);
+        formula.setOperators(list);
+        formula.simImplication();
+        System.out.println(formula.getOperators());
+    }
+
+    @Tag("EQUIVALENCE")
+    @Test
+    void testSimEquivalence()
+    {
+        System.out.println("======TEST TWO EXECUTED=======");
+        Formula formula = new Formula();
+        List<String> list = Arrays.asList("=>", "&", "*", "<=>", "*", "!", "*", "*");
+        System.out.println(list);
+        formula.setOperators(list);
+        formula.simEquivalence();
+        System.out.println(formula.getOperators());
+    }
+
+    @Tag("DEMORGAN")
+    @Test
+    void testDeMorgan()
+    {
+        System.out.println("======TEST TWO EXECUTED=======");
+        Formula formula = new Formula();
+        List<String> list = Arrays.asList("|", "!", "&", "*", "|", "!", "*", "!", "*", "*");
+        System.out.println(list);
+        formula.setOperators(list);
+        formula.deMorgan();
+        System.out.println(formula.getOperators());
+    }
+    //    @Tag("LOGFORM")
 //    @Test
 //    void testGetLogform()
 //    {
