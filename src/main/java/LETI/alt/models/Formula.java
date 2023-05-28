@@ -338,18 +338,18 @@ public class Formula {
         return false;
     }
 
-    public void simDistributivity(){
-        Stack<List<String>> r = new Stack<List<String>>();
-        Stack<String> p = new Stack<String>();
-
-        List<String> l = this.operators;
-
-        for (String operator: l) {
-            p.push(operator);
-        }
-
-
-    }
+//    public void simDistributivity(){
+//        Stack<List<String>> r = new Stack<List<String>>();
+//        Stack<String> p = new Stack<String>();
+//
+//        List<String> l = this.operators;
+//
+//        for (String operator: l) {
+//            p.push(operator);
+//        }
+//
+//
+//    }
 
     public void setOperators(List<String> operators) {
         this.operators = operators;
