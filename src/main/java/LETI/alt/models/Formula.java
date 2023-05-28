@@ -2,7 +2,6 @@ package LETI.alt.models;
 
 import LETI.alt.Logical.Operator;
 import jakarta.persistence.*;
-
 import java.util.*;
 
 @Entity
@@ -82,6 +81,402 @@ public class Formula {
         Collections.reverse(l);  // Если убрать получится обратная польская запись
         return l;
     }
+    public void negative(){
+        Stack<String> r = new Stack<>();
+        List<String> l = new ArrayList<>();
+        List<String> s;
+
+        s = this.operators;
+        Collections.reverse(s);
+        for(String operator: s){
+            r.push(operator);
+        }
+
+        r.push("!");
+        Collections.reverse(r);
+
+        while (r.size() != 0){
+            l.add(r.pop());
+        }
+        this.operators = l;
+        deMorgan();
+
+    }
+    public void simplificationCF() {
+        List<String> l;
+        Stack<String> p = new Stack<>();
+        Stack<String> r = new Stack<>();
+        String item;
+
+        l = this.operators;
+//        Collections.reverse(l); //Реверсируем, что записать нормально в стек
+
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+
+        while (p.size() != 0){
+            item = p.pop();
+            switch (item) {
+                case ("=>") -> simImplication();
+                case ("<=>") -> simEquivalence();
+            }
+        }
+        deMorgan();
+
+    }
+
+    public void simImplication(){
+        Stack<List<String>> r = new Stack<List<String>>();
+        Stack<String> p = new Stack<String>();
+
+        List<String> l = this.operators;
+
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+
+        while (p.size() != 0) {
+            switch (p.peek()) {
+                case ("*") -> {
+                    r.push(List.of(p.pop()));
+                }
+                case ("!") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("&"), ("|"), ("<=>") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("=>") -> {
+                    p.pop();
+                    List<String> list = new ArrayList<>(List.of("|"));
+                    if (r.peek().get(r.peek().size()-1).equals("!")){
+                        List<String> a = r.pop();
+                        a.remove(0);
+                        list.addAll(a);
+                    }else {
+                        list.add("!");
+                        list.addAll(r.pop());
+                    }
+
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+            }
+        }
+
+        Collections.reverse(r);
+        this.operators = r.pop();
+    }
+
+    public void simEquivalence(){
+        Stack<List<String>> r = new Stack<>();
+        Stack<String> p = new Stack<>();
+
+        List<String> l = this.operators;
+
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+
+        while (p.size() != 0) {
+            switch (p.peek()) {
+                case ("*") -> {
+                    r.push(List.of(p.pop()));
+                }
+                case ("!") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("&"), ("|"), ("=>") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("<=>") -> {
+                    p.pop();
+                    List<String> list = new ArrayList<>(List.of("|"));
+                    List<String> a = r.pop();
+                    List<String> b = r.pop();
+                    list.add("&");
+                    list.addAll(a);
+                    list.addAll(b);
+                    list.add("&");
+                    simDoubleNegativeExtra(list, a, b);
+
+                    r.push(list);
+                }
+            }
+        }
+
+        Collections.reverse(r);
+        this.operators = r.pop();
+    }
+
+    public void deMorgan(){
+        Stack<List<String>> r = new Stack<List<String>>();
+        Stack<String> p = new Stack<String>();
+
+        List<String> l = this.operators;
+
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+        while (p.size() != 0) {
+            switch (p.peek()) {
+                case ("*") -> {
+                    r.push(List.of(p.pop()));
+                }
+                case ("!") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("&"), ("|") -> {
+                    List<String> list = new ArrayList<>();
+                    String a = p.pop();
+                    if (p.size() != 0) {
+                        if (Objects.equals(p.peek(), "!")) {
+                            p.pop();
+                            switch (a) {
+                                case ("&") -> {
+                                    list.add("|");
+                                    simDoubleNegative(r, list);
+                                }
+                                case ("|") -> {
+                                    list.add("&");
+                                    simDoubleNegative(r, list);
+                                }
+                            }
+                        } else {
+                            list.add(a);
+                            list.addAll(r.pop());
+                            list.addAll(r.pop());
+                        }
+                    } else {
+                        list.add(a);
+                        list.addAll(r.pop());
+                        list.addAll(r.pop());
+                    }
+                    r.push(list);
+                }
+            }
+        }
+        Collections.reverse(r);
+        this.operators = r.pop();
+        while (valDeMorgan()) deMorgan();
+    }
+
+    private void simDoubleNegative(Stack<List<String>> r, List<String> list) {
+        List<String> d = r.pop();
+        List<String> b = r.pop();
+        simDoubleNegativeExtra(list, d, b);
+    }
+
+    private void simDoubleNegativeExtra(List<String> list, List<String> d, List<String> b) {
+        if (Objects.equals(d.get(0), "!")){
+            d.remove(0);
+            list.addAll(d);
+        }else {
+            list.add("!");
+            list.addAll(d);
+        }
+        if (Objects.equals(b.get(0), "!")){
+            b.remove(0);
+            list.addAll(b);
+        }else {
+            list.add("!");
+            list.addAll(b);
+        }
+    }
+
+    private Boolean valDeMorgan() {
+        Stack<String> p = new Stack<String>();
+        List<String> l = this.operators;
+        Collections.reverse(l);
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+        Collections.reverse(l);
+
+        while (p.size() != 0){
+            if ("!".equals(p.peek())) {
+                p.pop();
+                if ((Objects.equals(p.peek(), "&")) | (Objects.equals(p.peek(), "|"))) return true;
+            } else {
+                p.pop();
+            }
+        }
+
+        return false;
+    }
+
+    public void simDistributivity(){
+        Stack<List<String>> r = new Stack<>();
+        Stack<String> p = new Stack<>();
+        List<Literal> lit = new ArrayList<>(this.literals);
+        List<String> l = this.operators;
+        int count = 0;
+
+        for (String operator: l) {
+            p.push(operator);
+        }
+
+        while (p.size() != 0) {
+            switch (p.peek()) {
+                case ("*") -> {
+                    r.push(List.of(p.pop()));
+                    count++;
+                }
+                case ("!") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("&") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("|")  -> {
+                    p.pop();
+                    List<String> list = new ArrayList<>();
+                    List<String> a = r.pop();
+                    List<String> b = r.pop();
+                    if (Objects.equals(a.get(0), "&")){
+                        int count2 = 0, count3 = 0, count4 = 0;
+                        Stack<List<String>> k = distSeparate(list, a);
+
+                        for (String i: b) if (Objects.equals(i, "*")) count3++;
+                        for (String m: k.peek()) if (Objects.equals(m, "*")) count2++;
+
+                        list.addAll(k.pop());
+
+                        for (String m: k.peek()) if (Objects.equals(m, "*")) count4++;
+
+                        list.addAll(b);
+                        list.add("|");
+                        list.addAll(k.pop());
+                        list.addAll(b);
+//                        System.out.println(count4);
+//                        System.out.println(count3);
+//                        System.out.println(count2);
+//                        System.out.println(count);
+//                        System.out.println(lit.size());
+//                        for(Literal literal: lit) System.out.println(literal.getName());
+                        for (int j = 0; j < count3; j++) {
+                            lit.add(lit.size() - count + count2 + j, lit.get(lit.size() - count + count2 + count4 + j ));
+                            count++;
+                            count4++;
+                        }
+
+                    } else {
+                        if (Objects.equals(b.get(0), "&")) {
+                            int /*count2 = 0.*/ count3 = 0;
+                            Stack<List<String>> k = distSeparate(list, b);
+
+                            for (String i: a) if (Objects.equals(i, "*")) count3++;
+//                            for (String m: k.peek()) if (Objects.equals(m, "*")) count2++;
+
+                            list.addAll(a);
+                            list.addAll(k.pop());
+                            list.add("|");
+                            list.addAll(a);
+                            list.addAll(k.pop());
+
+//                            System.out.println(count3);
+//                            System.out.println(count2);
+//                            System.out.println(count);
+//                            System.out.println(lit.size());
+
+                            for (int j = 0; j < count3; j++) {
+                                lit.add(lit.size() - count + count3 + j + 1, lit.get(lit.size() - count + j));
+                                count++;
+                            }
+//                            for(Literal literal: lit) System.out.println(literal.getName());
+//                            System.out.println("fskfsfko");
+                        } else {
+                            list.add("|");
+                            list.addAll(a);
+                            list.addAll(b);
+                        }
+                    }
+                    r.push(list);
+                }
+            }
+        }
+        Collections.reverse(r);
+        this.operators = r.pop();
+        this.literals = lit;
+        while (valDistributivity()) simDistributivity();
+    }
+
+    public Boolean valDistributivity() {
+        Stack<String> p = new Stack<String>();
+        List<String> l = this.operators;
+        Collections.reverse(l);
+        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+            p.push(operator);
+        }
+        Collections.reverse(l);
+
+        while (p.size() != 0){
+            if ("|".equals(p.peek())) {
+                p.pop();
+                if (Objects.equals(p.peek(), "&")) return true;
+            } else {
+                p.pop();
+            }
+        }
+
+        return false;
+    }
+    public Stack<List<String>> distSeparate(List<String> list, List<String> b) {
+        list.add("&");
+        list.add("|");
+        Stack<List<String>> k = new Stack<>();
+        Stack<String> g = new Stack<>();
+        for (String operator1: b){
+            g.push(operator1);
+        }
+        while (g.size() != 0){
+            switch (g.peek()){
+                case ("*") -> k.push(List.of(g.pop()));
+                case ("!") -> {
+                    List<String> list1 = new ArrayList<>(List.of(g.pop()));
+                    list1.addAll(k.pop());
+                    k.push(list1);
+                }
+                case ("|") -> {
+                    List<String> list1 = new ArrayList<>(List.of(g.pop()));
+                    list1.addAll(k.pop());
+                    list1.addAll(k.pop());
+                    k.push(list1);
+                }
+                case ("&") -> {
+                    if (g.size() <= 1){
+                        g.pop();
+                    } else {
+                        List<String> list1 = new ArrayList<>(List.of(g.pop()));
+                        list1.addAll(k.pop());
+                        list1.addAll(k.pop());
+                        k.push(list1);
+
+                    }
+                }
+            }
+        }
+        return k;
+    }
+
     public void setOperators(List<String> operators) {
         this.operators = operators;
     }
@@ -193,3 +588,4 @@ public class Formula {
     }
 
 }
+

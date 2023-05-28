@@ -19,7 +19,12 @@ public class Literal {
     @JoinColumn (name="plot_id")
     private Plot plot;
 
+    public Literal() {
+    }
 
+    public Literal(String name) {
+        this.name = name;
+    }
 
     public Boolean getSuspect() {
         return suspect;
