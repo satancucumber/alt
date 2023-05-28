@@ -10,14 +10,14 @@
             >
                 <span
                     style="background-color:#ddd;"
-                    @mouseleave="descriptions[str] = false"
-                    @change="desLeave($str)"
-                    v-show="descriptions[str]"
+                    @mouseleave="desLeave(str)"
+
+                    v-show="isHold(str)"
                 > {{ str }}
                 </span>
                 <span
-                    @mouseover="descriptions[str] = true"
-                    v-show="!descriptions[str]"
+                    @mouseover="desOver(str)"
+                    v-show="!isHold(str)"
                 > {{ str }}
                 </span>
             </span>
@@ -38,32 +38,35 @@
                 <div v-for="formula in plot.formulas" v-bind:key="formula.id">
                     <span
                         style="background-color:#ddd;"
-                        @mouseleave="descriptions[formula.description] = false"
-                        v-show="descriptions[formula.description]"
+                        @mouseleave="desLeave(formula.description)"
+                        @click="toComputer(formula.id)"
+                        v-show="isHold(formula.description)"
                     > {{ formula.logform }}
                     </span>
                     <span
-                        @mouseleave="descriptions[formula.description] = true"
-                        v-show="!descriptions[formula.description]"
+                        @mouseover="desOver(formula.description)"
+                        v-show="!isHold(formula.description)"
                     > {{ formula.logform }}
                     </span>
                 </div>
             </b-col>
             <b-col>
                 <div v-for="formula in formulas" v-bind:key="formula.id">
-                    <div> {{ formula.logform }} </div>
+                    <span
+                        style="background-color:#ddd;"
+                        @mouseleave="desLeave(formula.description)"
+                        @click="toFormulas(formula.id)"
+                        v-show="isHold(formula.description)"
+                    > {{ formula.logform }}
+                    </span>
+                  <span
+                      @mouseover="desOver(formula.description)"
+                      v-show="!isHold(formula.description)"
+                  > {{ formula.logform }}
+                    </span>
                 </div>
             </b-col>
         </b-row>
-
-        <span @mouseover="upHere['upHere'] = true" @mouseleave="upHere['upHere'] = false" >
-          <span> Something Something </span>
-          <span v-show="upHere['upHere']"> egrgerghwer </span>
-        </span>
-        <div @mouseover="changecolor" @mouseleave="originalcolor" >
-          <span v-bind:style="styletext"> Something Something </span>
-        </div>
-        <div  > {{ upHere }} </div>
         <div> {{ descriptions }} </div>
     </div>
 </template>
@@ -71,9 +74,6 @@
     export default {
         data() {
             return {
-                upHere: {
-                    'upHere': false
-                },
                 formulas: [],
                 styleobj: {
                     'Яблоко не красное': {
@@ -83,13 +83,13 @@
                 styletext: {
                     backgroundColor:"0000"
                 },
-                descriptions: {},
+                descriptions: [],
                 plot: {
                     id: 1,
                     name: 'Яблоко',
                     text: [
                         'Яблоко не красное',
-                        '.  ',
+                        '. ',
                         'Яблоко ароматное',
                         '. ',
                         'Если яблоко красное и яблоко ароматное, то яблоко вкусное',
@@ -113,7 +113,7 @@
                             name: 'C',
                             description: 'Яблоко вкусное',
                             suspect: true
-                        }
+                        },
                     ],
                     formulas: [
                         {
@@ -178,10 +178,10 @@
             }
         },
         created() {
-            var formulas = this.plot.formulas;
-            for (var i = 0; i < formulas.length; i++) {
-                this.descriptions[formulas[i].description] = false;
-            }
+            this.plot.formulas.forEach(f=> {
+                this.descriptions.push(Object.assign({}, {name: f.description, val: false}))
+
+            })
         },
         methods: {
             isDescription(str) {
@@ -193,14 +193,51 @@
                 }
                 return false;
             },
+            val_by_name(name) {
+                for (var i = 0; i < this.descriptions.length; i++) {
+                    if (this.descriptions[i].name == name) {
+                      return this.descriptions[i].val
+                    }
+                }
+            },
+            getIndex(list, id) {
+              for (var i = 0; i < list.length; i++ ) {
+                if (list[i].id == id) {
+                  return i;
+                }
+              }
+            },
             desOver(str) {
-                this.descriptions[str] = true;
+              for (var i = 0; i < this.descriptions.length; i++) {
+                if (this.descriptions[i].name == str) {
+                  this.descriptions[i].val = true;
+                }
+              }
             },
             desLeave(str) {
-                this.descriptions[str] = false;
+              for (var i = 0; i < this.descriptions.length; i++) {
+                if (this.descriptions[i].name == str) {
+                  this.descriptions[i].val = false;
+                }
+              }
             },
-            show(str) {
-                return this.descriptions[str]
+            isHold(str) {
+                if (this.val_by_name(str)) {
+                    return true;
+                }
+                return false;
+            },
+            toComputer(id) {
+                var index = this.getIndex(this.plot.formulas, id);
+                this.formulas.push(this.plot.formulas[index]).then(
+                    this.plot.formulas.splice(index, 1)
+                );
+            },
+            toFormulas(id) {
+              var index = this.getIndex(this.formulas, id);
+              this.plot.formulas.push(this.formulas[index]).then(
+                  this.formulas.splice(index, 1)
+              );
             },
             changecolor: function() {
                 this.styletext.backgroundColor = "#bbb";

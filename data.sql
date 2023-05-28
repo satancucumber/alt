@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS detective;
 create table if not exists detective.plot (
     id serial primary key,
     name varchar(256),
-    text varchar(4096),
+    text varchar(256)[],
     img varchar(256)
 );
 
@@ -34,17 +34,16 @@ create table if not exists detective.evidence (
     right_pos INTEGER,
     top_pos INTEGER,
     bottom_pos INTEGER,
-    formula_id INTEGER REFERENCES detective.formula (id)
+    formula_id INTEGER REFERENCES detective.formula (id),
+    plot_id INTEGER REFERENCES detective.plot (id)
 );
 
 insert into detective.plot (name, text, img)
-values ('Яблоко', 'Яблоко не красное. Яблоко ароматное. Если яблоко красное и яблоко ароматное, то яблоко вкусное', 'img/1');
+values ('Яблоко', ARRAY ['Яблоко не красное','. ','Яблоко ароматное','. ','Если яблоко красное и яблоко ароматное, то яблоко вкусное','.'], 'img/1');
 
 insert into detective.formula (description, plot_id, operators)
 values
-('Яблоко не красное', 1, ARRAY ['!','*']),
-('Яблоко ароматное', 1, ARRAY ['*']),
-('Если яблоко красное и ароматное, то яблоко вкусное', 1, ARRAY ['=>','&','*','*','*']);
+('Яблоко вкусное или яблоко ароматное, и яблоко вкусное или яблоко красное.', 1, ARRAY ['&','|','*','*','|','*','*']);
 
 insert into detective.literal (name, description, plot_id)
 values
@@ -53,7 +52,7 @@ values
 ('C', 'яблоко вкусное', 1);
 
 insert into detective.evidence (left_pos, right_pos, top_pos, bottom_pos, formula_id)
-values (10, 10, 10, 10, 1);
+values (10, 10, 10, 10, 1, 1);
 
 insert into detective.formula_literal (formula_id, literal_id)
 values

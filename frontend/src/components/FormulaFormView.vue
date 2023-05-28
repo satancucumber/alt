@@ -18,7 +18,7 @@
         </vue-good-table>
 
         <b-button variant="primary" @click="add">Добавить</b-button>
-        <div id="form">
+        <div id="form2">
             <b-row>
                 <b-col sm="3">
                     <b-form-input readonly
@@ -43,16 +43,13 @@
             </b-row>
             <b-button variant="primary" @click="save"> Сохранить </b-button>
         </div>
-
-
-        <div>operators: {{ operators }}</div>
-        <div>literals: {{ literals }}</div>
-        <div v-for="formula in formulas" v-bind:key="formula.id"> <div> {{ formula }} </div> </div>
-        <div> {{ formula }}</div>
+        <div> mliterals {{ mliterals }} </div>
+        <div> const_literals {{ const_literals }} </div>
     </div>
 </template>
 <script>
     export default {
+        props: ['mliterals', 'mformulas'],
         data() {
             return {
                 mid: 1,
@@ -62,31 +59,12 @@
                 formulas: [],
                 formula: '',
                 last_symbol: '',
-                const_literals: [
-                    {
-                        id: 1,
-                        name: 'A',
-                        description: 'Яблоко красное',
-                        suspect: false
-                    },
-                    {
-                        id: 2,
-                        name: 'B',
-                        description: 'Яблоко ароматное',
-                        suspect: false
-                    },
-                    {
-                        id: 3,
-                        name: 'C',
-                        description: 'Яблоко вкусное',
-                        suspect: true
-                    },
-                ],
+                const_literals: [],
                 const_operators: [
                     '(', ')',
                     '!',
                     '&', '|',
-                    '=>', '<=>'
+                    '=>'
                 ],
                 columns: [
                     {
@@ -99,6 +77,10 @@
                     }
                 ],
             }
+        },
+        created() {
+            this.const_literals = this.mliterals;
+            this.formulas = this.mformulas;
         },
         methods: {
             add_operator(operator) {
@@ -149,7 +131,7 @@
                 }
             },
             clean() {
-                document.getElementById("form").style.display = "none";
+                document.getElementById("form2").style.display = "none";
                 this.id = null;
                 this.formula = '';
                 this.operators = [];
@@ -174,7 +156,7 @@
             },
             edit(id) {
                 var index = this.getIndex(this.formulas, id);
-                document.getElementById("form").style.display = "block";
+                document.getElementById("form2").style.display = "block";
                 this.id = this.formulas[index].id;
                 this.formula = this.formulas[index].formula;
                 this.operators = this.formulas[index].operators;
@@ -188,7 +170,7 @@
     };
 </script>
 <style scoped>
-    #form {
-        display: none
+    #form2 {
+        display: block
     }
 </style>
