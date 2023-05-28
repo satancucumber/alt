@@ -38,6 +38,14 @@ const router = new VueRouter({
             path: '/canvas',
             component: () => import('../components/CanvasView.vue'),
         },
+        {
+            path: '/input',
+            component: () => import('../components/PlotInputView.vue'),
+        },
+        {
+            path: '/evidence',
+            component: () => import('../components/EvidenceView.vue'),
+        },
     ]
 })
 export default router

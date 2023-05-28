@@ -16,6 +16,7 @@
             <b-img center id="img" wight="720px" height="540px" v-if="item.imageUrl" :src="item.imageUrl">
             </b-img>
         </div>
+        <div> {{ item.imageUrl }} </div>
     </div>
 </template>
 

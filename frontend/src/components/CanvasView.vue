@@ -13,12 +13,15 @@
         </div>
 
         <div>{{ triangle }}</div>
+
     </div>
 </template>
 
 
 <script>
+
 export default {
+
   name: 'CanvasView',
   data() {
     return {
@@ -79,4 +82,5 @@ export default {
     #mycanvas {
       border: 1px solid grey;
     }
+
 </style>
