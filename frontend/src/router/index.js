@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Home from '../components/HomeView.vue'
 
 
 Vue.use(VueRouter)
@@ -12,7 +11,7 @@ const router = new VueRouter({
         {
             path: '/',
             name: 'home',
-            component: Home
+            component: () => import('../components/MainView.vue'),
         },
         {
             path: '/plot',

@@ -67,121 +67,23 @@
                 </div>
             </b-col>
         </b-row>
-        <div> {{ descriptions }} </div>
     </div>
 </template>
 <script>
     export default {
+        props: ['mplot'],
         data() {
             return {
-                formulas: [],
-                styleobj: {
-                    'Яблоко не красное': {
-                        backgroundColor:"0000"
-                    }
-                },
-                styletext: {
-                    backgroundColor:"0000"
-                },
-                descriptions: [],
-                plot: {
-                    id: 1,
-                    name: 'Яблоко',
-                    text: [
-                        'Яблоко не красное',
-                        '. ',
-                        'Яблоко ароматное',
-                        '. ',
-                        'Если яблоко красное и яблоко ароматное, то яблоко вкусное',
-                        '.'
-                    ],
-                    literals: [
-                        {
-                            id: 1,
-                            name: 'A',
-                            description: 'Яблоко красное',
-                            suspect: false
-                        },
-                        {
-                            id: 2,
-                            name: 'B',
-                            description: 'Яблоко ароматное',
-                            suspect: false
-                        },
-                        {
-                            id: 3,
-                            name: 'C',
-                            description: 'Яблоко вкусное',
-                            suspect: true
-                        },
-                    ],
-                    formulas: [
-                        {
-                            id: 1,
-                            description: 'Яблоко не красное',
-                            operators: ['!', '*'],
-                            literals: [
-                                {
-                                    id: 1,
-                                    name: 'A',
-                                    description: 'Яблоко красное',
-                                    suspect: false
-                                }
-                            ],
-                            logform: '!A',
-                            desform: 'НЕ (Яблоко красное)'
-                        },
-                        {
-                            id: 2,
-                            description: 'Яблоко ароматное',
-                            operators: ['*'],
-                            literals: [
-                                {
-                                    id: 2,
-                                    name: 'B',
-                                    description: 'Яблоко ароматное',
-                                    suspect: false
-                                }
-                            ],
-                            logform: 'B',
-                            desform: 'Яблоко ароматное'
-                        },
-                        {
-                            id: 3,
-                            description: 'Если яблоко красное и яблоко ароматное, то яблоко вкусное',
-                            operators: ['=>', '&', '*', '*', '*'],
-                            literals: [
-                                {
-                                    id: 1,
-                                    name: 'A',
-                                    description: 'Яблоко красное',
-                                    suspect: false
-                                },
-                                {
-                                    id: 2,
-                                    name: 'B',
-                                    description: 'Яблоко ароматное',
-                                    suspect: false
-                                },
-                                {
-                                    id: 3,
-                                    name: 'C',
-                                    description: 'Яблоко вкусное',
-                                    suspect: true
-                                }
-                            ],
-                            logform: '(A&B)=>C',
-                            desform: 'ЕСЛИ (Яблоко красное И Яблоко ароматное), ТО Яблоко вкусное'
-                        }
-                    ]
-                }
+              formulas: [],
+              descriptions: [],
+              plot: null
             }
         },
         created() {
-            this.plot.formulas.forEach(f=> {
-                this.descriptions.push(Object.assign({}, {name: f.description, val: false}))
-
-            })
+          this.mplot.formulas.forEach(f=> {
+            this.descriptions.push(Object.assign({}, {name: f.description, val: false}))
+          })
+          this.plot = this.mplot;
         },
         methods: {
             isDescription(str) {
@@ -239,12 +141,6 @@
                   this.formulas.splice(index, 1)
               );
             },
-            changecolor: function() {
-                this.styletext.backgroundColor = "#bbb";
-            },
-            originalcolor: function() {
-                this.styletext.backgroundColor = "0000";
-            }
         }
 
     }

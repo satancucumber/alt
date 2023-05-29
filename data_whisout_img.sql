@@ -4,8 +4,7 @@ CREATE SCHEMA IF NOT EXISTS detective;
 create table if not exists detective.plot (
     id serial primary key,
     name varchar(256),
-    text text[],
-    img varchar(256)
+    text varchar(256)[]
 );
 
 create table if not exists detective.formula (
@@ -35,12 +34,10 @@ create table if not exists detective.evidence (
     right_pos INTEGER,
     top_pos INTEGER,
     bottom_pos INTEGER,
-    formula_id INTEGER REFERENCES detective.formula (id),
-    plot_id INTEGER REFERENCES detective.plot (id)
 );
 
-insert into detective.plot (name, text, img)
-values ('Яблоко', ARRAY ['Яблоко не красное','. ','Яблоко ароматное','. ','Если яблоко красное и яблоко ароматное, то яблоко вкусное','.'], 'img/1');
+insert into detective.plot (name, text)
+values ('Яблоко', ARRAY ['Яблоко не красное','. ','Яблоко ароматное','. ','Если яблоко красное и яблоко ароматное, то яблоко вкусное','.']);
 
 insert into detective.formula (description, plot_id, operators)
 values
@@ -54,8 +51,8 @@ values
 ('B', 'яблоко ароматное', 1),
 ('C', 'яблоко вкусное', 1);
 
-insert into detective.evidence (left_pos, right_pos, top_pos, bottom_pos, formula_id, plot_id)
-values (10, 10, 10, 10, 1, 1);
+insert into detective.evidence (left_pos, right_pos, top_pos, bottom_pos)
+values (10, 10, 10, 10);
 
 insert into detective.formula_literal (formula_id, literal_id)
 values

@@ -24,7 +24,7 @@
         <div v-for="formula in formulas" v-bind:key="formula.id">
             <b-row>
                 <b-col>
-                    {{ formula.formula }}
+                    {{ formula.logform }}
                 </b-col>
                 <b-col>
                     <b-form>
@@ -52,93 +52,30 @@
             </b-row>
         </div>
         <b-button @click="toArr"> Сохранить </b-button>
-        <div> descriptions: {{ descriptions }} </div>
-        <div> read: {{ read }} </div>
-        <div> {{ textarr }} </div>
-        <div> {{ indexes }} </div>
-        <div> alert: {{ alerttext }} </div>
-        <div> formulas: {{ formulas }} </div>
-
     </div>
 </template>
 <script>
     export default {
+      props: ['mformulas', 'mtext'],
       data() {
         return {
             indexes: [],
             alerttext : '',
-            text: 'Яблоко не красное. Яблоко ароматное. Если яблоко красное и яблоко ароматное, то яблоко вкусное.',
+            text: '',
             textarr: [],
             descriptions: {},
             read: [],
-            formulas: [
-                {
-                    id: 1,
-                    description: '',
-                    operators: ['!', '*'],
-                    literals: [
-                        {
-                            id: 1,
-                            name: 'A',
-                            description: 'Яблоко красное',
-                            suspect: false
-                        }
-                    ],
-                    formula: '!A'
-                },
-                {
-                    id: 2,
-                    description: '',
-                    operators: ['*'],
-                    literals: [
-                        {
-                            id: 2,
-                            name: 'B',
-                            description: 'Яблоко ароматное',
-                            suspect: false
-                        }
-                    ],
-                    formula: 'B'
-                },
-                {
-                    id: 3,
-                    description: '',
-                    operators: ['(', '*', '&', '*', ')', '=>', '*'],
-                    literals: [
-                        {
-                            id: 1,
-                            name: 'A',
-                            description: 'Яблоко красное',
-                            suspect: false
-                        },
-                        {
-                            id: 2,
-                            name: 'B',
-                            description: 'Яблоко ароматное',
-                            suspect: false
-                        },
-                        {
-                            id: 3,
-                            name: 'C',
-                            description: 'Яблоко вкусное',
-                            suspect: true
-                        }
-                    ],
-                    formula: '(A&B)=>C'
-                },
-            ],
+            formulas: null
         }
       },
       created() {
-        this.formulas.forEach(f=> {
-          this.read.push(Object.assign({}, {id: f.id, val: true}))
-        });
-        this.formulas.forEach(f=> {
+        this.formulas = this.mformulas;
+        this.mformulas.forEach(f=> {
+          this.read.push(Object.assign({}, {id: f.id, val: true}));
           this.descriptions[f.id] = '';
-        });
-        this.formulas.forEach(f=> {
-          this.indexes.push(Object.assign({}, {id: f.id, val: [0, 0]}))
-        });
+          this.indexes.push(Object.assign({}, {id: f.id, val: [0, 0]}));
+        })
+        this.textarr = this.mtext;
       },
       methods: {
         save_text() {

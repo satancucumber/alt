@@ -18,17 +18,28 @@ public class Evidence {
     @Column(name = "bottom_pos")
     private Integer bottom;
 
-    @ManyToOne (optional=false, cascade=CascadeType.ALL)
-    @JoinColumn (name="formula_id")
-    private Formula formula;
+//    @ManyToOne (optional=false, cascade=CascadeType.ALL)
+//    @JoinColumn (name="formula_id")
+//    private Formula formula;
+//    @ManyToOne (optional=false, cascade=CascadeType.ALL)
+//    @JoinColumn (name="plot_id")
+//    private Plot plot;
 
-    public Formula getFormula() {
-        return formula;
-    }
+//    public Formula getFormula() {
+//        return this.formula;
+//    }
+//
+//    public void setFormula(Formula formula) {
+//        this.formula = formula;
+//    }
 
-    public void setFormula(Formula formula) {
-        this.formula = formula;
-    }
+//    public Plot getPlot() {
+//        return this.plot;
+//    }
+//
+//    public void setPlot(Plot plot) {
+//        this.plot = plot;
+//    }
 
     public Long getId() {
         return id;
