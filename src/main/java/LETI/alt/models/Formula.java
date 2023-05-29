@@ -34,6 +34,14 @@ public class Formula {
 //    private String desform;
 
 
+//    public Plot getPlot() {
+//        return plot;
+//    }
+
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
+
     public List<String> getOperators() {
         return operators;
     }

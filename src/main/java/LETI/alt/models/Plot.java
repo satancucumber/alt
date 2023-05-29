@@ -12,14 +12,16 @@ public class Plot {
     private Long id;
     @Column(name = "name")
     private String name;
-    @Column(name = "img")
-    private String img;
+//    @Column(name = "img")
+//    private String img;
     @Column(name = "text")
-    private String text;
+    private List<String> text;
     @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
     private List<Literal> literals;
     @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
     private List<Formula> formulas;
+//    @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
+//    private List<Evidence> evidences;
 
     public Long getId() {
         return id;
@@ -37,19 +39,19 @@ public class Plot {
         this.name = name;
     }
 
-    public String getImg() {
-        return img;
-    }
+//    public String getImg() {
+//        return img;
+//    }
+//
+//    public void setImg(String img) {
+//        this.img = img;
+//    }
 
-    public void setImg(String img) {
-        this.img = img;
-    }
-
-    public String getText() {
+    public List<String> getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(List<String> text) {
         this.text = text;
     }
 
@@ -68,4 +70,12 @@ public class Plot {
     public void setFormulas(List<Formula> formulas) {
         this.formulas = formulas;
     }
+
+//    public List<Evidence> getEvidences() {
+//        return evidences;
+//    }
+//
+//    public void setEvidences(List<Evidence> evidences) {
+//        this.evidences = evidences;
+//    }
 }

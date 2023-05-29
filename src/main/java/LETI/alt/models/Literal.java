@@ -19,7 +19,13 @@ public class Literal {
     @JoinColumn (name="plot_id")
     private Plot plot;
 
+//    public Plot getPlot() {
+//        return plot;
+//    }
 
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
 
     public Boolean getSuspect() {
         return suspect;

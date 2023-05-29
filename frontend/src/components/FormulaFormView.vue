@@ -22,7 +22,7 @@
             <b-row>
                 <b-col sm="3">
                     <b-form-input readonly
-                        v-model="formula"
+                        v-model="logform"
                     ></b-form-input>
                 </b-col>
                 <b-col>
@@ -43,8 +43,6 @@
             </b-row>
             <b-button variant="primary" @click="save"> Сохранить </b-button>
         </div>
-        <div> mliterals {{ mliterals }} </div>
-        <div> const_literals {{ const_literals }} </div>
     </div>
 </template>
 <script>
@@ -57,7 +55,7 @@
                 literals: [],
                 operators: [],
                 formulas: [],
-                formula: '',
+                logform: '',
                 last_symbol: '',
                 const_literals: [],
                 const_operators: [
@@ -73,7 +71,7 @@
                     },
                     {
                       label: 'Формула',
-                      field: 'formula'
+                      field: 'logform'
                     }
                 ],
             }
@@ -84,18 +82,18 @@
         },
         methods: {
             add_operator(operator) {
-                this.formula = this.formula + operator;
+                this.logform = this.logform + operator;
                 this.operators.push(operator);
                 this.last_symbol = operator;
             },
             add_literal(literal) {
-                this.formula = this.formula + literal.name;
+                this.logform = this.logform + literal.name;
                 this.literals.push(literal);
                 this.operators.push('*');
                 this.last_symbol = literal.name;
             },
             update_last_symbol() {
-                if(this.formula != '') {
+                if(this.logform != '') {
                     if(this.operators[this.operators.length - 1] == '*') {
                         this.last_symbol = this.literals[this.literals.length - 1].name;
                     } else {
@@ -107,21 +105,21 @@
             },
             del_symbol() {
                 if(this.last_symbol != '') {
-                    var index = this.formula.lastIndexOf(this.last_symbol);
+                    var index = this.logform.lastIndexOf(this.last_symbol);
                     if(this.last_symbol == this.operators[this.operators.length - 1]) {
                         this.operators.pop();
                     } else {
-                        this.formula = this.formula.substring(0, index);
+                        this.logform = this.logform.substring(0, index);
                         this.literals.pop();
                         this.operators.pop();
                     }
-                    this.formula = this.formula.substring(0, index);
+                    this.logform = this.logform.substring(0, index);
                     this.update_last_symbol()
                 }
 
             },
             add() {
-                document.getElementById("form").style.display = "block";
+                document.getElementById("form2").style.display = "block";
             },
             getIndex(list, id) {
                 for (var i = 0; i < list.length; i++ ) {
@@ -133,7 +131,7 @@
             clean() {
                 document.getElementById("form2").style.display = "none";
                 this.id = null;
-                this.formula = '';
+                this.logform = '';
                 this.operators = [];
                 this.literals = [];
             },
@@ -143,7 +141,7 @@
                     description: '',
                     operators: this.operators,
                     literals: this.literals,
-                    formula: this.formula
+                  logform: this.logform
                 };
                 if (this.id) {
                     var index = this.getIndex(this.formulas, this.id);
@@ -158,7 +156,7 @@
                 var index = this.getIndex(this.formulas, id);
                 document.getElementById("form2").style.display = "block";
                 this.id = this.formulas[index].id;
-                this.formula = this.formulas[index].formula;
+                this.logform = this.formulas[index].logform;
                 this.operators = this.formulas[index].operators;
                 this.literals = this.formulas[index].literals;
             },
