@@ -1,9 +1,11 @@
 package LETI.alt.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 @Entity
+@Data
 @Table(name = "plot", schema = "detective")
 public class Plot {
     @Id
@@ -17,11 +19,20 @@ public class Plot {
     @Column(name = "text")
     private List<String> text;
     @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
-    private List<Literal> literals;
-    @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<Formula> formulas;
 //    @OneToMany (mappedBy="plot", fetch=FetchType.EAGER)
 //    private List<Evidence> evidences;
+
+    public Plot() {
+    }
+
+    public Plot(Long id, String name, List<String> text, List<Formula> formulas) {
+        this.id = id;
+        this.name = name;
+        this.text = text;
+        this.formulas = formulas;
+    }
 
     public Long getId() {
         return id;
@@ -53,14 +64,6 @@ public class Plot {
 
     public void setText(List<String> text) {
         this.text = text;
-    }
-
-    public List<Literal> getLiterals() {
-        return literals;
-    }
-
-    public void setLiterals(List<Literal> literals) {
-        this.literals = literals;
     }
 
     public List<Formula> getFormulas() {

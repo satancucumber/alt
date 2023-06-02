@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2>Формулы</h2>
+        <h5>Формулы</h5>
+        <p></p>
         <vue-good-table
             :columns="columns"
             :rows="formulas"
@@ -16,14 +17,16 @@
                   </span>
             </template>
         </vue-good-table>
-
+        <p></p>
         <b-button variant="primary" @click="add">Добавить</b-button>
+        <p></p>
         <div id="form2">
             <b-row>
                 <b-col sm="3">
                     <b-form-input readonly
                         v-model="logform"
                     ></b-form-input>
+                    <p></p>
                 </b-col>
                 <b-col>
                     <b-button @click="del_symbol"> X </b-button>
@@ -31,17 +34,21 @@
             </b-row>
             <b-row>
                 <b-col sm="1">
+                    <p></p>
                     <b-button-group v-for="operator in const_operators" v-bind:key="operator">
                         <b-button @click="add_operator(operator)"> {{ operator }} </b-button>
                     </b-button-group>
                 </b-col>
-                <b-col sm="1">
+                <b-col sm="2">
+                    <p></p>
                     <b-button-group v-for="literal in const_literals" v-bind:key="literal.id">
                         <b-button @click="add_literal(literal)"> {{ literal.name }} </b-button>
                     </b-button-group>
                 </b-col>
             </b-row>
+            <p></p>
             <b-button variant="primary" @click="save"> Сохранить </b-button>
+            <p></p>
         </div>
     </div>
 </template>

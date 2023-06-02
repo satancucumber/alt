@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2>Литералы</h2>
+        <h5>Литералы</h5>
+        <p></p>
         <vue-good-table
             :columns="columns"
             :rows="mliterals"
@@ -20,7 +21,9 @@
                   </span>
             </template>
         </vue-good-table>
-        <b-button variant="primary" @click="add_literal">Добавить</b-button>
+        <p></p>
+        <b-button center variant="primary" @click="add_literal">Добавить</b-button>
+        <p></p>
         <b-form inline id="form">
             <label class="sr-only" for="inline-form-input-name">Literals</label>
             <b-form-input
@@ -29,21 +32,27 @@
                 class="mb-2 mr-sm-2 mb-sm-0"
                 placeholder="Литерал"
             ></b-form-input>
+            <p></p>
             <b-form-input
                 v-model="description"
                 id="inline-form-input-name"
                 class="mb-2 mr-sm-2 mb-sm-0"
                 placeholder="Описание"
             ></b-form-input>
+            <p></p>
             <b-form-checkbox
               id="checkbox-1"
               v-model="suspect"
               name="checkbox-1"
               type=boolean
             >
-                Подозреваемый
+                <span>
+                      Подозреваемый
+                </span>
             </b-form-checkbox>
+            <p></p>
             <b-button variant="primary" @click="save">Сохранить</b-button>
+            <p></p>
         </b-form>
     </div>
 </template>

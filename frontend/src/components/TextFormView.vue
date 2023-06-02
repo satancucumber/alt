@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2>Текст</h2>
+        <h5>Текст</h5>
+      <p></p>
         <b-form id="textform">
             <b-form-textarea
                 id="textarea-auto-height"
@@ -9,8 +10,10 @@
                 rows="10"
                 max-rows="20"
             ></b-form-textarea>
+          <p></p>
             <b-button @click="save_text"> Сохранить </b-button>
         </b-form>
+      <p></p>
         <b-form id="textfield">
             <b-form-textarea readonly
                 id="textarea-auto-height"
@@ -19,14 +22,18 @@
                 rows="10"
                 max-rows="20"
             ></b-form-textarea>
+          <p></p>
             <b-button @click="edit_text"> Изменить </b-button>
         </b-form>
+      <p></p>
         <div v-for="formula in formulas" v-bind:key="formula.id">
             <b-row>
-                <b-col>
+                <b-col sm="2">
+                  <p></p>
                     {{ formula.logform }}
                 </b-col>
                 <b-col>
+                  <p></p>
                     <b-form>
                         <b-row>
                             <b-col>
@@ -39,10 +46,11 @@
                                         max-rows="8"
                                         v-model="descriptions[formula.id]"
                                     ></b-form-textarea>
-                                  <p v-show="!isRead(formula.id)" > {{ alerttext }} </p>
+                                  <p v-show="!isRead(formula.id)" style="color: crimson" > {{ alerttext }} </p>
                                 </b-form>
                             </b-col>
                             <b-col>
+                              <p></p>
                                   <b-button v-show="!isRead(formula.id)" @click="save_description(formula.id)"> Сохранить </b-button>
                                   <b-button :disabled="!isOpen" v-show="isRead(formula.id)" @click="edit_description(formula.id)"> Изменить </b-button>
                             </b-col>
@@ -51,7 +59,9 @@
                 </b-col>
             </b-row>
         </div>
+      <p></p>
         <b-button @click="toArr"> Сохранить </b-button>
+      <p></p>
     </div>
 </template>
 <script>

@@ -57,7 +57,6 @@ export default {
             id: r.id,
             name: r.name,
             text: r.text,
-            literals: r.literals,
             formulas: r.formulas
           }
         })

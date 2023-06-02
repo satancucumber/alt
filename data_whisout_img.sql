@@ -18,8 +18,7 @@ create table if not exists detective.literal (
     id serial primary key,
     name varchar(256),
     description varchar(256),
-    suspect BOOLEAN DEFAULT FALSE,
-    plot_id INTEGER REFERENCES detective.plot (id)
+    suspect BOOLEAN DEFAULT FALSE
 );
 
 create table if not exists detective.formula_literal (
@@ -33,23 +32,23 @@ create table if not exists detective.evidence (
     left_pos INTEGER,
     right_pos INTEGER,
     top_pos INTEGER,
-    bottom_pos INTEGER,
+    bottom_pos INTEGER
 );
 
 insert into detective.plot (name, text)
-values ('Яблоко', ARRAY ['Яблоко не красное','. ','Яблоко ароматное','. ','Если яблоко красное и яблоко ароматное, то яблоко вкусное','.']);
+values ('Яблоко', ARRAY ['Имеются следующие данные о яблоке.','Яблоко красное','. ','Яблоко ароматное','. ','Если яблоко красное и яблоко ароматное, то яблоко вкусное','. Исходя из представленных данных будет ли верно утверждение, что яблоко вкусное?']);
 
 insert into detective.formula (description, plot_id, operators)
 values
-('Яблоко не красное', 1, ARRAY ['!','*']),
+('Яблоко красное', 1, ARRAY ['*']),
 ('Яблоко ароматное', 1, ARRAY ['*']),
 ('Если яблоко красное и яблоко ароматное, то яблоко вкусное', 1, ARRAY ['=>','&','*','*','*']);
 
-insert into detective.literal (name, description, plot_id)
+insert into detective.literal (name, description)
 values
-('A', 'яблоко красное', 1),
-('B', 'яблоко ароматное', 1),
-('C', 'яблоко вкусное', 1);
+('A', 'яблоко красное'),
+('B', 'яблоко ароматное'),
+('C', 'яблоко вкусное');
 
 insert into detective.evidence (left_pos, right_pos, top_pos, bottom_pos)
 values (10, 10, 10, 10);

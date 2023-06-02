@@ -30,7 +30,7 @@ public class LiteralController {
     public Literal create(@RequestBody Literal literal) {
         return literalRepo.save(literal);
     }
-    @PostMapping("/list")
+    @PostMapping("list")
     public List<Literal> createAll(@RequestBody List<Literal> literals) {
         return literalRepo.saveAll(literals);
     }

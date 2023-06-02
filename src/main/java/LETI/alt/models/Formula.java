@@ -1,14 +1,23 @@
 package LETI.alt.models;
 
+import java.util.regex.*;
 import LETI.alt.Logical.Operator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.*;
 
+import static org.apache.tomcat.util.http.parser.HttpParser.isAlpha;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "formula", schema = "detective")
 public class Formula {
     private static Map<String, Operator> LOperators = Map.of(
-            "!", new Operator("!", "НЕ *", "!*"),
+            "!", new Operator("!", "НЕ*", "!*"),
             "&", new Operator("&", "* И *", "*&*"),
             "|", new Operator("|", "* ИЛИ *", "*|*"),
             "=>", new Operator("=>", "ЕСЛИ *, ТО *", "*=>*"),
@@ -24,15 +33,25 @@ public class Formula {
     @JoinTable (name="formula_literal", schema = "detective",
             joinColumns=@JoinColumn (name="formula_id"),
             inverseJoinColumns=@JoinColumn(name="literal_id"))
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<Literal> literals;
     @Column(name = "operators")
     private List<String> operators;
     @ManyToOne(optional=false, cascade=CascadeType.ALL)
-    @JoinColumn (name="plot_id")
+    @JoinColumn (name="plot_id", nullable = false)
+    @JsonIgnore
     private Plot plot;
 //    private String logform;
 //    private String desform;
 
+
+    public Plot getPlot() {
+        return plot;
+    }
+
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
 
     public List<String> getOperators() {
         return operators;
@@ -171,7 +190,10 @@ public class Formula {
         }
 
         Collections.reverse(r);
+
         this.operators = r.pop();
+
+        this.setDescription("Избавимся от импликаций: ");
     }
 
     public void simEquivalence(){
@@ -272,6 +294,7 @@ public class Formula {
         Collections.reverse(r);
         this.operators = r.pop();
         while (valDeMorgan()) deMorgan();
+        this.setDescription("Внесём отрицания внутрь скобок по законам де Мограна: ");
     }
 
     private void simDoubleNegative(Stack<List<String>> r, List<String> list) {
@@ -417,6 +440,7 @@ public class Formula {
         this.operators = r.pop();
         this.literals = lit;
         while (valDistributivity()) simDistributivity();
+        this.setDescription("По свойству дистрибутивности получим: ");
     }
 
     public Boolean valDistributivity() {
@@ -504,6 +528,21 @@ public class Formula {
         this.literals = literals;
     }
 
+    public static boolean isAlpha(String s)
+    {
+        if (s == null) {
+            return false;
+        }
+
+        for (int i = 0; i < s.length(); i++)
+        {
+            char c = s.charAt(i);
+            if (!Character.isLetter(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
     /*
         literals: [.getName()=A, .getName()=B, .getName()=C]
         operators: ['=>','&','*','*','*']
@@ -527,10 +566,16 @@ public class Formula {
         while (s.size() != 0) {
             if (s.peek().equals("!")) {
                 Operator operator = this.LOperators.get(s.pop());
-                l.push(operator.toString(l.pop()));
+                if ((this.isAlpha(l.peek())) | (l.peek().charAt(0) == '(')) {
+                    l.push(operator.toString(l.pop()));
+                }
+                else {
+                    l.push(operator.toString("(" + l.pop() + ")"));
+                }
+
             } else if (this.LOperators.containsKey(s.peek())) {
                 Operator operator = this.LOperators.get(s.pop());
-                if (l.size() == 2) {
+                if ((s.size() == 0) && (l.size() == 2)) {
                     l.push(operator.toString(l.pop(), l.pop()));
                 } else {
                     l.push("(" + operator.toString(l.pop(), l.pop()) + ")");
@@ -540,6 +585,22 @@ public class Formula {
             }
         }
         return l.pop();
+    }
+    public static boolean isDescription(String s)
+    {
+        if (s == null) {
+            return false;
+        }
+
+        List<String> operators = Arrays.asList("НЕ", "ИЛИ", "И", "ЕСЛИ");
+
+        for (String operator : operators)
+        {
+            if (s.contains(operator)) {
+                return false;
+            }
+        }
+        return true;
     }
     /*
         literals: [.getName()=A, .getName()=B, .getName()=C]
@@ -568,23 +629,80 @@ public class Formula {
             String key = s.pop();
             if (key.equals("!")) {
                 Operator operator = this.LOperators.get(key);
-                if (l.peek().indexOf('(') == 0) {
+                if (l.peek().charAt(0) == '(') {
                     l.push(operator.getDescription(l.pop()));
-                } else {
+                }
+                else {
                     l.push(operator.getDescription("(" + l.pop() + ")") );
                 }
             } else if (this.LOperators.containsKey(key)) {
                 Operator operator = this.LOperators.get(key);
-                if (l.size() == 2) {
-                    l.push(operator.getDescription(l.pop(), l.pop()));
+                if ((s.size() == 0) & (l.size() == 2)) {
+                    l.push(operator.getDescription( l.pop() ,  l.pop() ));
                 } else {
-                    l.push("(" + operator.getDescription(l.pop(), l.pop()) + ")");
+                    l.push("(" + operator.getDescription( l.pop() ,  l.pop() ) + ")");
                 }
             } else {
                 l.push(key);
             }
         }
         return l.pop();
+    }
+
+    public List<List<Literal>> toKNF() {
+        Stack<List<Literal>> dis = new Stack<List<Literal>>();
+        Stack<Literal> literals = new Stack<Literal>();
+
+        for (Literal literal : this.getLiterals()) {
+            literals.push(literal);
+        }
+        Stack<String> s = new Stack<String>();
+        for (String key : this.getOperators()) {
+            s.push(key);
+        }
+        while (s.size() != 0) {
+            switch (s.peek()) {
+                case ("*") -> {
+                    s.pop();
+                    Literal lit = literals.pop();
+                    Literal l = new Literal(
+                            lit.getId(),
+                            lit.getName(),
+                            lit.getDescription(),
+                            lit.getSuspect(),
+                            lit.getFormulas(),
+                            false);
+                    dis.add(Arrays.asList(l));
+                }
+                case ("!") -> {
+                    Literal lit = dis.pop().get(0);
+                    Literal l = new Literal(
+                            lit.getId(),
+                            lit.getName(),
+                            lit.getDescription(),
+                            lit.getSuspect(),
+                            lit.getFormulas(),
+                            true);
+                    dis.push(Arrays.asList(l));
+                    s.pop();
+                }
+                case ("|") -> {
+                    List<Literal> list = new ArrayList<Literal>();
+                    list.addAll(dis.pop());
+                    list.addAll(dis.pop());
+                    dis.push(list);
+                    s.pop();
+                }
+                case ("&") -> {
+                    s.pop();
+                }
+            }
+        }
+        List<List<Literal>> res = new ArrayList<List<Literal>>();
+        while (dis.size() != 0) {
+            res.add(dis.pop());
+        }
+        return res;
     }
 
 }

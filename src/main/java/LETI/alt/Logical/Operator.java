@@ -37,7 +37,21 @@ public class Operator {
     public void setFormula(String formula) {
         this.formula = formula;
     }
+    public static boolean isAlpha(String s)
+    {
+        if (s == null) {
+            return false;
+        }
 
+        for (int i = 0; i < s.length(); i++)
+        {
+            char c = s.charAt(i);
+            if (!Character.isLetter(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
     public String getDescription(String... formulas) {
         String out = this.description;
         if (this.name.equals("!")) {

@@ -1,8 +1,15 @@
 package LETI.alt.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
+@Getter
+@Setter
+
 @Table(name = "literal", schema = "detective")
 public class Literal {
     @Id
@@ -15,16 +22,44 @@ public class Literal {
     private String description;
     @Column(name = "suspect")
     private Boolean suspect;
-    @ManyToOne(optional=false, cascade=CascadeType.ALL)
-    @JoinColumn (name="plot_id")
-    private Plot plot;
+    @ManyToMany
+    @JoinTable (name="formula_literal", schema = "detective",
+            joinColumns=@JoinColumn (name="literal_id"),
+            inverseJoinColumns=@JoinColumn(name="formula_id"))
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JsonIgnore
+    private List<Formula> formulas;
+    @JsonIgnore
+    private Boolean nerative;
 
     public Literal() {
     }
 
-    public Literal(String name) {
+    public Literal(Long id, String name, String description, Boolean suspect, List<Formula> formulas, Boolean nerative) {
+        this.id = id;
         this.name = name;
+        this.description = description;
+        this.suspect = suspect;
+        this.formulas = formulas;
+        this.nerative = nerative;
     }
+
+    public Boolean getNerative() {
+        return nerative;
+    }
+
+    public void setNerative(Boolean nerative) {
+        this.nerative = nerative;
+    }
+
+    public List<Formula> getFormulas() {
+        return formulas;
+    }
+
+    public void setFormulas(List<Formula> formulas) {
+        this.formulas = formulas;
+    }
+
 
     public Boolean getSuspect() {
         return suspect;
