@@ -1,5 +1,6 @@
 package LETI.alt.test;
 
+import LETI.alt.Logical.ResMethod;
 import LETI.alt.controller.ResMethodController;
 import LETI.alt.models.Formula;
 import LETI.alt.models.Literal;
@@ -73,6 +74,56 @@ public class ResMethodTest {
 
     }
 
+    @Tag("MAKE_RESOLUTION")
+    @Test
+    void testMakeRes() {
+        Literal literal1 = new Literal();
+        literal1.setName("А");
+        literal1.setDescription("Яблоко красное");
+        literal1.setSuspect(false);
+        literal1.setNegative(true);
+
+        Literal literal2 = new Literal();
+        literal2.setName("B");
+        literal2.setDescription("Яблоко зелёное");
+        literal2.setSuspect(false);
+        literal2.setNegative(true);
+
+        Literal literal3 = new Literal();
+        literal3.setName("C");
+        literal3.setDescription("Яблоко желтое");
+        literal3.setSuspect(true);
+        literal3.setNegative(false);
+
+        Literal literal4 = new Literal();
+        literal4.setName("А");
+        literal4.setDescription("Яблоко красное");
+        literal4.setSuspect(false);
+        literal4.setNegative(false);
+
+        Literal literal5 = new Literal();
+        literal5.setName("B");
+        literal5.setDescription("Яблоко зелёное");
+        literal5.setSuspect(false);
+        literal5.setNegative(false);
+
+        List<Literal> list1 = new ArrayList<>(List.of(literal1));
+        List<Literal> list2 = new ArrayList<>(List.of(literal2));
+        List<Literal> list3 = new ArrayList<>(Arrays.asList(literal4, literal5, literal3));
+        List<List<Literal>> list = new ArrayList<>(Arrays.asList(list1, list2, list3));
+        ResMethod resolution = new ResMethod();
+        resolution.setRes(list);
+        for (List<Literal> i : resolution.getRes()) {
+            for (Literal j: i) System.out.println(j.getName() + " " + j.getNegative());
+            System.out.println("_");
+        }
+        System.out.println("==================");
+        resolution.makeRes(0);
+        for (List<Literal> k : resolution.getRes()) {
+            for (Literal l: k) System.out.println(l.getName() + " " + l.getNegative());
+            System.out.println("_");
+        }
+    }
     @AfterEach
     void tearThis(){
         System.out.println("END TEST");

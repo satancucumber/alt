@@ -1,11 +1,13 @@
 package LETI.alt.controller;
 
+import LETI.alt.Logical.ResMethod;
 import LETI.alt.models.Formula;
 import LETI.alt.models.Literal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -13,7 +15,8 @@ import java.util.List;
 public class ResMethodController {
     private List<List<Formula>> resFormulas;
     private List<List<String>> resStrKNF;
-//    private List<List<Literal>> resKNF;
+    private String error = "";
+    private List<List<Literal>> resKNF;
     @GetMapping
     public List<List<Formula>> listFormulas() {
         return this.resFormulas;
@@ -26,7 +29,7 @@ public class ResMethodController {
     public List<List<Formula>> create(@RequestBody List<Formula> formulas) {
         List<List<Formula>> resFormulas = new ArrayList<List<Formula>>();
         List<List<String>> resStrKNF = new ArrayList<List<String>>();
-//        List<List<Literal>> resKNF = new ArrayList<List<Literal>>();
+        List<List<Literal>> resKNF = new ArrayList<List<Literal>>();
         for (Formula formula : formulas) {
             List<Formula> list = new ArrayList<Formula>();
             Formula newFormula = new Formula();
@@ -99,14 +102,14 @@ public class ResMethodController {
 
             List<List<Literal>> knf = newFormula.toKNF();
 
-//            resKNF.addAll(knf);
+            resKNF.addAll(knf);
 
             List<String> strknf = new ArrayList<String>();
 
             for (List<Literal> literals : knf) {
                 String dis = "";
                 for (Literal literal : literals) {
-                    if (literal.getNerative()) {
+                    if (literal.getNegative()) {
                         dis += "!" + literal.getName();
                     }
                     else {
@@ -120,9 +123,20 @@ public class ResMethodController {
             }
             resStrKNF.add(strknf);
         }
+        this.resFormulas = resFormulas;
+        this.resKNF = resKNF;
+        this.resStrKNF = resStrKNF;
+
+        this.valError();
+        if (Objects.equals(this.error, "")) {
+            ResMethod res = new ResMethod();
+            res.setRes(this.resKNF);
+            res.setError(0);
+            res.makeRes(0);
+        }
 
         this.resFormulas = resFormulas;
-//        this.resKNF = resKNF;
+        this.resKNF = resKNF;
         this.resStrKNF = resStrKNF;
 
 //        for (List<Formula> formlist : resFormulas) {
@@ -133,7 +147,40 @@ public class ResMethodController {
 //            }
 //        }
 
+
+
         return resFormulas;
     }
-}
 
+    public void valError() {
+        int count = 0;
+        boolean flag = true;
+        List<String> names = new ArrayList<>();
+        for (List<Literal> i: this.resKNF) {
+            for (Literal j: i) {
+                if (j.getSuspect()) {
+                    for (String n: names){
+                        if (Objects.equals(j.getName(), n)) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        count++;
+                        names.add(j.getName());
+                    }
+                    flag = true;
+                }
+            }
+        }
+        if (count != 1) this.error = "Неверное количество подозреваемых";
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+}

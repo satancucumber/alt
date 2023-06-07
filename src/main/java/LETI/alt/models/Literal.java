@@ -30,26 +30,26 @@ public class Literal {
     @JsonIgnore
     private List<Formula> formulas;
     @JsonIgnore
-    private Boolean nerative;
+    private Boolean negative;
 
     public Literal() {
     }
 
-    public Literal(Long id, String name, String description, Boolean suspect, List<Formula> formulas, Boolean nerative) {
+    public Literal(Long id, String name, String description, Boolean suspect, List<Formula> formulas, Boolean negative) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.suspect = suspect;
         this.formulas = formulas;
-        this.nerative = nerative;
+        this.negative = negative;
     }
 
-    public Boolean getNerative() {
-        return nerative;
+    public Boolean getNegative() {
+        return negative;
     }
 
-    public void setNerative(Boolean nerative) {
-        this.nerative = nerative;
+    public void setNegative(Boolean negative) {
+        this.negative = negative;
     }
 
     public List<Formula> getFormulas() {

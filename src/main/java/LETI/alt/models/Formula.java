@@ -146,8 +146,8 @@ public class Formula {
     }
 
     public void simImplication(){
-        Stack<List<String>> r = new Stack<List<String>>();
-        Stack<String> p = new Stack<String>();
+        Stack<List<String>> r = new Stack<>();
+        Stack<String> p = new Stack<>();
 
         List<String> l = this.operators;
 
@@ -321,7 +321,7 @@ public class Formula {
     }
 
     private Boolean valDeMorgan() {
-        Stack<String> p = new Stack<String>();
+        Stack<String> p = new Stack<>();
         List<String> l = this.operators;
         Collections.reverse(l);
         for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
@@ -444,23 +444,50 @@ public class Formula {
     }
 
     public Boolean valDistributivity() {
-        Stack<String> p = new Stack<String>();
+        Stack<List<String>> r = new Stack<>();
+        Stack<String> p = new Stack<>();
         List<String> l = this.operators;
-        Collections.reverse(l);
-        for (String operator: l) { // [=>, &, *, <=>, *, !, *, *]
+
+        for (String operator: l) {
             p.push(operator);
         }
-        Collections.reverse(l);
 
-        while (p.size() != 0){
-            if ("|".equals(p.peek())) {
-                p.pop();
-                if (Objects.equals(p.peek(), "&")) return true;
-            } else {
-                p.pop();
+        while (p.size() != 0) {
+            switch (p.peek()) {
+                case ("*") -> {
+                    r.push(List.of(p.pop()));
+                }
+                case ("!") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("&") -> {
+                    List<String> list = new ArrayList<>(List.of(p.pop()));
+                    list.addAll(r.pop());
+                    list.addAll(r.pop());
+                    r.push(list);
+                }
+                case ("|")  -> {
+                    p.pop();
+                    List<String> list = new ArrayList<>();
+                    List<String> a = r.pop();
+                    List<String> b = r.pop();
+                    if (Objects.equals(a.get(0), "&")){
+                        return true;
+                    } else {
+                        if (Objects.equals(b.get(0), "&")) {
+                            return true;
+                        } else {
+                            list.add("|");
+                            list.addAll(a);
+                            list.addAll(b);
+                        }
+                    }
+                    r.push(list);
+                }
             }
         }
-
         return false;
     }
     public Stack<List<String>> distSeparate(List<String> list, List<String> b) {

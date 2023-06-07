@@ -23,10 +23,10 @@ public class FormulaTest {
     @Test
     void testToPolish()
     {
-        System.out.println("======TEST ONE EXECUTED=======");
+        System.out.println("======TEST TO POLISH EXECUTED=======");
         Formula formula = new Formula();
-        List<String> list = Arrays.asList("(", "*", "&", "(", "*", "=>", "!", "*", ")", ")", "=>", "*");
-        System.out.println(list);
+        List<String> list = Arrays.asList("!", "(", "!", "*", "&", "(", "*", "|", "*", ")", ")");
+//        System.out.println(list);
         formula.setOperators(list);
         System.out.println(formula.getOperators());
         System.out.println(formula.toPolish());
@@ -38,11 +38,28 @@ public class FormulaTest {
     {
         System.out.println("======TEST IMPLICATION EXECUTED=======");
         Formula formula = new Formula();
+        Literal literal1 = new Literal();
+        literal1.setName("А");
+        literal1.setDescription("Яблоко красное");
+
+        Literal literal2 = new Literal();
+        literal2.setName("B");
+        literal2.setDescription("Яблоко зелёное");
+
+
+        Literal literal3 = new Literal();
+        literal3.setName("C");
+        literal3.setDescription("Яблоко желтое");
+
+        Literal literal4 = new Literal();
+        literal4.setName("D");
+        literal4.setDescription("мяу");
         List<String> list = Arrays.asList("=>", "&", "*", "=>", "*", "!", "*", "*");
-        System.out.println(list);
+        formula.setLiterals(Arrays.asList(literal1, literal2, literal3, literal4));
         formula.setOperators(list);
+        System.out.println(formula.getLogform());
         formula.simImplication();
-        System.out.println(formula.getOperators());
+        System.out.println(formula.getLogform());
     }
 
     @Tag("EQUIVALENCE")
@@ -64,11 +81,28 @@ public class FormulaTest {
     {
         System.out.println("======TEST DE MORGAN EXECUTED=======");
         Formula formula = new Formula();
+        Literal literal1 = new Literal();
+        literal1.setName("А");
+        literal1.setDescription("Яблоко красное");
+
+        Literal literal2 = new Literal();
+        literal2.setName("B");
+        literal2.setDescription("Яблоко зелёное");
+
+
+        Literal literal3 = new Literal();
+        literal3.setName("C");
+        literal3.setDescription("Яблоко желтое");
+
+        Literal literal4 = new Literal();
+        literal4.setName("D");
+        literal4.setDescription("мяу");
         List<String> list = Arrays.asList("|", "!", "&", "*", "|", "!", "*", "!", "*", "*");
-        System.out.println(list);
+        formula.setLiterals(Arrays.asList(literal1, literal2, literal3, literal4));
         formula.setOperators(list);
+        System.out.println(formula.getLogform());
         formula.deMorgan();
-        System.out.println(formula.getOperators());
+        System.out.println(formula.getLogform());
     }
 
     @Tag("DISTRIBUTIVITY")
@@ -91,9 +125,9 @@ public class FormulaTest {
         lit6.setName("F");
         List<Literal> lit = Arrays.asList(lit1, lit2, lit3, lit4, lit5);
         List<String> list = Arrays.asList("|", "&", /*"|",*/ "!", "*", /*"*",*/ "&", "*", "*", "&", "*", "*");
-        System.out.println(list);
         formula.setLiterals(lit);
         formula.setOperators(list);
+        System.out.println(formula.getLogform());
         formula.simDistributivity();
         System.out.println(formula.getLogform());
         for (int i = 0; i < formula.getLiterals().size(); i++) System.out.println(formula.getLiterals().get(i).getName());
@@ -124,7 +158,7 @@ public class FormulaTest {
         for (List<Literal> list : dis) {
             System.out.println("________________");
             for (Literal literal : list) {
-                System.out.println(literal.getName() + " " + literal.getNerative());
+                System.out.println(literal.getName() + " " + literal.getNegative());
             }
         }
 
