@@ -7,12 +7,10 @@ import java.util.*;
 public class ResMethod {
     private List<List<Literal>> res;
     private Literal suspect;
-    private int error;
     private HashMap<List<Literal>, List<List<Literal>>> path;
-
-    public int getError() {return error;}
-
-    public void setError(int Error) {this.error = Error;}
+    private List<List<List<Literal>>> solution;
+    private List<List<Literal>> condition;
+    private HashMap<List<List<Literal>>, List<List<Literal>>> moving;
 
     public Literal getSuspect() {
         return suspect;
@@ -34,8 +32,26 @@ public class ResMethod {
 
     public HashMap<List<Literal>, List<List<Literal>>> getPath() {return path;}
 
+    public void setSolution(List<List<List<Literal>>> solution) {this.solution = solution;}
+
+    public List<List<List<Literal>>> getSolution() {return this.solution;}
+
+    public void setCondition(List<List<Literal>> condition) {this.condition = condition;}
+
+    public List<List<Literal>> getCondition() {return this.condition;}
+
+    public HashMap<List<List<Literal>>, List<List<Literal>>> getMoving() {
+        return moving;
+    }
+
+    public void setMoving(HashMap<List<List<Literal>>, List<List<Literal>>> moving) {
+        this.moving = moving;
+    }
+
     public void makeRes(int k) {
         List<List<Literal>> resNew = new ArrayList<>(new ArrayList<>());
+        List<Literal> begin_literal1 = new ArrayList<>();
+        List<Literal> begin_literal2 = new ArrayList<>();
         if (k == 0) {
             for (List<Literal> i : this.res) {
                 for (Literal j : i) {
@@ -45,6 +61,7 @@ public class ResMethod {
                     }
                 }
             }
+            this.moving = new HashMap<>();
             Literal literal = new Literal();
             literal.setNegative(true);
             literal.setSuspect(true);
@@ -53,9 +70,9 @@ public class ResMethod {
             literal.setId(this.suspect.getId());
             literal.setFormulas(this.suspect.getFormulas());
             this.res.add(List.of(literal));
-            List<List<Literal>> r = new ArrayList<>(Arrays.asList(null, null));
+            this.path = new HashMap<>();
             for (List<Literal> w: this.getRes()) {
-                path.put(w, r);
+                this.path.put(w, null);
             }
         }
         for (int i = 0; i < this.getRes().size() - 1; i++) {
@@ -66,6 +83,8 @@ public class ResMethod {
                 List<Integer> remove_a = new ArrayList<>();
                 List<Integer> remove_b = new ArrayList<>();
                 boolean resolution = false;
+                int resa_id = -1;
+                int resb_id = -1;
                 for (int m = 0; m < a.size(); m++) {
                     for (int n = 0; n < b.size(); n++) {
                         if (Objects.equals(a.get(m).getName(), b.get(n).getName())) {
@@ -86,6 +105,8 @@ public class ResMethod {
                             } else {
                                 List<Integer> quadruplicates = new ArrayList<>(new ArrayList<>(flag_dublicate));
                                 boolean b1 = false;
+                                resa_id = m;
+                                resb_id = n;
                                 remove_a.add(m);
                                 remove_b.add(n);
                                 resolution = true;
@@ -137,12 +158,28 @@ public class ResMethod {
                         }
                     }
                 }
-                if (resolution) {
+                if ((resolution) & (resa_id != -1) & (resb_id != -1)) {
+
                     List<Literal> c = new ArrayList<>(collecting(a, remove_a));
                     c.addAll(collecting(b, remove_b));
+
+                    this.moving.put(Arrays.asList(a, b), Arrays.asList(moving_literal(a, resa_id), moving_literal(b, resb_id)));
                     if (!valRepeatRes(resNew, c)) {
-                        path.put(c, Arrays.asList(a, b));
+                        this.path.put(c, Arrays.asList(a, b));
+                        System.out.println("Hash");
+                        System.out.println(c);
+                        System.out.println(this.path.get(c));
+                        System.out.println("meow");
                         resNew.add(c);
+                        if (c.size() == 0) {
+                            begin_literal1.addAll(a);
+                            begin_literal2.addAll(b);
+                            System.out.println("qiufhqiuhfqu");
+                            System.out.println(a);
+                            System.out.println(b);
+                            System.out.println("dasdaaa");
+                            //for (Literal h: a) System.out.println(h.getName() + " " + h.getNegative());
+                        }
                     }
                 }
             }
@@ -160,30 +197,73 @@ public class ResMethod {
                 k++;
                 makeRes(k);
             } else {
-                res.clear();
+                this.res.clear();
             }
         } else {
-            List<Literal> empty_flag = new ArrayList<>();
-            for (List<Literal> i : this.res) {
-                if (i.size() == 0) {
-                    empty_flag = i;
-                    break;
+//            List<Literal> empty_flag = new ArrayList<>();
+//            for (List<Literal> i : this.res) {
+//                if (i.size() == 0) {
+//                    empty_flag = i;
+//                    break;
+//                }
+//            }
+//            List<List<Literal>> empty_flag1 = this.path.get(empty_flag);
+            List<List<List<Literal>>> result = new ArrayList<>();
+            List<List<Literal>> condition = new ArrayList<>();
+            Stack<List<Literal>> s = new Stack<>();
+            s.push(begin_literal1);
+            s.push(begin_literal2);
+            result.add(Arrays.asList(begin_literal1, begin_literal2));
+            System.out.println("STACK");
+            for (Literal i: s.peek()) System.out.println(i.getName() + " " + i.getNegative());
+            System.out.println(this.path.get(s.peek()));
+//            result.add(empty_flag1);
+            while (s.size() != 0) {
+                if (!Objects.equals(this.path.get(s.peek()), null)) {
+                    List<Literal> a = s.pop();
+                    List<List<Literal>> iterator = new ArrayList<>(this.moving.get(this.path.get(a)));
+                    iterator.add(a);
+                    System.out.println("CIRCLE");
+                    System.out.println(this.path.get(a));
+                    System.out.println(this.path.get(a).get(1));
+                    s.push(this.path.get(a).get(0));
+                    s.push(this.path.get(a).get(1));
+                    //for (Literal v: s.peek()) System.out.println(v.getName() + " " + v.getNegative());
+                    result.add(iterator);
+                    System.out.println("circle");
+                    for (List<List<Literal>> m: result) {
+                        for (List<Literal> n : m) {
+                            for (Literal o: n) System.out.println(o.getName() + " " + o.getNegative());
+                            System.out.println("_");
+                        }
+                        System.out.println("!!");
+                    }
+                    System.out.println("fsdfaa");
+                } else {
+                    condition.add(s.peek());
+                    s.pop();
                 }
             }
-            List<List<Literal>> empty_flag1 = path.get(empty_flag);
-            List<List<List<Literal>>> result = new ArrayList<>();
-            List<List<Literal>> iterator = new ArrayList<>();
-            List<List<Literal>> iterator1 = new ArrayList<>();
-            result.add(empty_flag1);
-            while (true) {
-                iterator.add(empty_flag1.get(0));
-                iterator = path.get(empty_flag1.get(0));
-                result.add(iterator);
-                iterator.add(empty_flag1.get(1));
-                iterator = path.get(empty_flag1.get(1));
-                result.add(iterator);
+            System.out.println("result");
+            for (List<List<Literal>> m: result) {
+                for (List<Literal> n : m) {
+                    for (Literal o: n) System.out.println(o.getName() + " " + o.getNegative());
+                    System.out.println("_");
+                }
+                System.out.println("!!");
             }
+            System.out.println("fsdfaa");
+            Collections.reverse(result);
+            this.solution = result;
+            this.condition = condition;
         }
+    }
+
+    private List<Literal> moving_literal(List<Literal> list, int index) {
+        List<Literal> result = new ArrayList<>(list);
+        Literal literal = result.remove(index);
+        result.add(0, literal);
+        return result;
     }
 
     private List<Literal> collecting(List<Literal> list, List<Integer> remove) {
@@ -226,4 +306,6 @@ public class ResMethod {
 
         return false;
     }
+
+
 }

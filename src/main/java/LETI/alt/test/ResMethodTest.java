@@ -123,6 +123,19 @@ public class ResMethodTest {
             for (Literal l: k) System.out.println(l.getName() + " " + l.getNegative());
             System.out.println("_");
         }
+        System.out.println("================== SOLUTION ===================");
+        for (List<List<Literal>> m: resolution.getSolution()) {
+            for (List<Literal> n : m) {
+                for (Literal o: n) System.out.println(o.getName() + " " + o.getNegative());
+                System.out.println("_");
+            }
+            System.out.println("!!");
+        }
+        System.out.println("================== CONDITION ==================");
+        for (List<Literal> u : resolution.getCondition()) {
+            for (Literal v: u) System.out.println(v.getName() + " " + v.getNegative());
+            System.out.println("_");
+        }
     }
     @AfterEach
     void tearThis(){
