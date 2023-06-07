@@ -166,30 +166,17 @@ public class ResMethod {
                     this.moving.put(Arrays.asList(a, b), Arrays.asList(moving_literal(a, resa_id), moving_literal(b, resb_id)));
                     if (!valRepeatRes(resNew, c)) {
                         this.path.put(c, Arrays.asList(a, b));
-                        System.out.println("Hash");
-                        System.out.println(c);
-                        System.out.println(this.path.get(c));
-                        System.out.println("meow");
                         resNew.add(c);
                         if (c.size() == 0) {
                             begin_literal1.addAll(a);
                             begin_literal2.addAll(b);
-                            System.out.println("qiufhqiuhfqu");
-                            System.out.println(a);
-                            System.out.println(b);
-                            System.out.println("dasdaaa");
-                            //for (Literal h: a) System.out.println(h.getName() + " " + h.getNegative());
                         }
                     }
                 }
             }
         }
         this.res.addAll(resNew);
-        for (List<Literal> i : this.getRes()) {
-            for (Literal j: i) System.out.println(j.getName() + " " + j.getNegative());
-            System.out.println("_");
-        }
-        System.out.println("==================");
+
 
 
         if (!valMakeRes()) {
@@ -200,59 +187,25 @@ public class ResMethod {
                 this.res.clear();
             }
         } else {
-//            List<Literal> empty_flag = new ArrayList<>();
-//            for (List<Literal> i : this.res) {
-//                if (i.size() == 0) {
-//                    empty_flag = i;
-//                    break;
-//                }
-//            }
-//            List<List<Literal>> empty_flag1 = this.path.get(empty_flag);
             List<List<List<Literal>>> result = new ArrayList<>();
             List<List<Literal>> condition = new ArrayList<>();
             Stack<List<Literal>> s = new Stack<>();
             s.push(begin_literal1);
             s.push(begin_literal2);
             result.add(Arrays.asList(begin_literal1, begin_literal2));
-            System.out.println("STACK");
-            for (Literal i: s.peek()) System.out.println(i.getName() + " " + i.getNegative());
-            System.out.println(this.path.get(s.peek()));
-//            result.add(empty_flag1);
             while (s.size() != 0) {
                 if (!Objects.equals(this.path.get(s.peek()), null)) {
                     List<Literal> a = s.pop();
                     List<List<Literal>> iterator = new ArrayList<>(this.moving.get(this.path.get(a)));
                     iterator.add(a);
-                    System.out.println("CIRCLE");
-                    System.out.println(this.path.get(a));
-                    System.out.println(this.path.get(a).get(1));
                     s.push(this.path.get(a).get(0));
                     s.push(this.path.get(a).get(1));
-                    //for (Literal v: s.peek()) System.out.println(v.getName() + " " + v.getNegative());
                     result.add(iterator);
-                    System.out.println("circle");
-                    for (List<List<Literal>> m: result) {
-                        for (List<Literal> n : m) {
-                            for (Literal o: n) System.out.println(o.getName() + " " + o.getNegative());
-                            System.out.println("_");
-                        }
-                        System.out.println("!!");
-                    }
-                    System.out.println("fsdfaa");
                 } else {
                     condition.add(s.peek());
                     s.pop();
                 }
             }
-            System.out.println("result");
-            for (List<List<Literal>> m: result) {
-                for (List<Literal> n : m) {
-                    for (Literal o: n) System.out.println(o.getName() + " " + o.getNegative());
-                    System.out.println("_");
-                }
-                System.out.println("!!");
-            }
-            System.out.println("fsdfaa");
             Collections.reverse(result);
             this.solution = result;
             this.condition = condition;
