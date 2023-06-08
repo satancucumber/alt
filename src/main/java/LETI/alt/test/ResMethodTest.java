@@ -19,7 +19,170 @@ public class ResMethodTest {
     void setupThis(){
         System.out.println("START TEST");
     }
+    @Tag("Text")
+    @Test
+    void testToText()
+    {
+        System.out.println("======TEST ONE EXECUTED=======");
 
+        Literal literal1n = new Literal();
+        literal1n.setName("А");
+        literal1n.setDescription("Яблоко красное");
+        literal1n.setNegative(true);
+
+        Literal literal1 = new Literal();
+        literal1.setName("А");
+        literal1.setDescription("Яблоко красное");
+        literal1.setNegative(false);
+
+        Literal literal2 = new Literal();
+        literal2.setName("B");
+        literal2.setDescription("Яблоко ароматное");
+        literal2.setNegative(false);
+
+        Literal literal2n = new Literal();
+        literal2n.setName("B");
+        literal2n.setDescription("Яблоко ароматное");
+        literal2n.setNegative(true);
+
+        Literal literal3 = new Literal();
+        literal3.setName("C");
+        literal3.setDescription("Яблоко вкусное");
+        literal3.setNegative(false);
+
+        ResMethodController res = new ResMethodController();
+
+        List<List<List<Literal>>> result = new ArrayList<List<List<Literal>>>(
+                Arrays.asList(
+                    Arrays.asList(
+                        Arrays.asList(literal1),
+                        Arrays.asList(literal1n,literal2n, literal3),
+                        Arrays.asList(literal2n, literal3)
+                        ),
+                    Arrays.asList(
+                        Arrays.asList(literal2n, literal3),
+                        Arrays.asList(literal2),
+                        Arrays.asList(literal3)
+                    )
+                ));
+
+        List<List<String>> text = res.toText(result);
+
+        for (List<String> list : text) {
+            for (String str : list) {
+                System.out.println(str);
+            }
+            System.out.println("=============");
+        }
+        System.out.println(text);
+    }
+    @Tag("Plot")
+    @Test
+    void testPlot() {
+
+        Literal n = new Literal();
+        n.setName("N");
+        n.setDescription("Преступление произошло ночью");
+        n.setSuspect(false);
+        Literal lb = new Literal();
+        lb.setName("LB");
+        lb.setSuspect(false);
+        lb.setDescription("Брюс пришел на работу утром");
+        Literal s = new Literal();
+        s.setSuspect(false);
+        s.setDescription("Сигнализация работала");
+        s.setName("S");
+        Literal lc = new Literal();
+        lc.setDescription("Карл прошел на работу утром");
+        lc.setName("LC");
+        lc.setSuspect(false);
+        Literal ld = new Literal();
+        ld.setName("LD");
+        ld.setDescription("Дилан пришел на работу утром");
+        ld.setSuspect(false);
+        Literal mc = new Literal();
+        mc.setDescription("Карл ушел последним");
+        mc.setName("MC");
+        mc.setSuspect(false);
+        Literal md = new Literal();
+        md.setDescription("Дилан ушел последним");
+        md.setName("MD");
+        md.setSuspect(false);
+        Literal ma = new Literal();
+        ma.setDescription("Алекс ушел последним");
+        ma.setName("MA");
+        ma.setSuspect(false);
+        Literal a = new Literal();
+        a.setName("A");
+        a.setSuspect(true);
+        a.setDescription("Алекс преступник");
+
+        Formula f1 = new Formula();
+        f1.setLiterals(Arrays.asList(n));
+        f1.setOperators(Arrays.asList("!","*"));
+        Formula f2 = new Formula();
+        f2.setLiterals(Arrays.asList(lb,lc,ld));
+        f2.setOperators(Arrays.asList("!","&","!","*","|","*","*"));
+        Formula f3 = new Formula();
+        f3.setLiterals(Arrays.asList(lb,s));
+        f3.setOperators(Arrays.asList("=>","*","*"));
+        Formula f4 = new Formula();
+        f4.setLiterals(Arrays.asList(lb,lc,ld));
+        f4.setOperators(Arrays.asList("|","*","|","*","*"));
+        Formula f5 = new Formula();
+        f5.setLiterals(Arrays.asList(mc,md,ma));
+        f5.setOperators(Arrays.asList("&","*","&","*","*"));
+        Formula f6 = new Formula();
+        f6.setLiterals(Arrays.asList(s,n,a));
+        f6.setOperators(Arrays.asList("=>","&","*","!","*","*"));
+
+        List<Formula> formulas = Arrays.asList(f1,f3,f4,f5,f6);
+
+        ResMethodController res = new ResMethodController();
+
+        List<List<Formula>> list = res.create(formulas);
+
+        for (List<Formula> formlist : list) {
+            System.out.println(formlist.size());
+           for (Formula f : formlist) {
+               System.out.println(f.getLogform());
+               System.out.println(f.getDesform());
+           }
+        }
+
+            List<List<List<String>>> listString = res.listStr();
+
+            for (List<List<String>> l : listString) {
+                System.out.println("____________");
+                for (List<String> str : l) {
+                    System.out.println(str);
+                }
+            }
+
+            List<List<List<Literal>>> lit = res.getSteps();
+
+            for (List<List<Literal>> l : lit) {
+                System.out.println("шаг_шаг_шаг_шаг_шаг");
+                for (List<Literal> d : l) {
+                    System.out.println("первый_второй_результат");
+                    for (Literal str : d) {
+                        System.out.println("__________________");
+                        System.out.println(str.getName() + " " + str.getNegative());
+                    }
+                }
+            }
+
+            List<List<String>> steps = res.listSteps();
+            for (List<String> str : steps) {
+                System.out.println("____________");
+                System.out.println(str);
+
+            }
+
+
+
+
+    }
     @Tag("RESOLUTION")
     @Test
     void testResMethod()
@@ -30,48 +193,73 @@ public class ResMethodTest {
         Literal literal1 = new Literal();
         literal1.setName("А");
         literal1.setDescription("Яблоко красное");
+        literal1.setSuspect(false);
 
         Literal literal2 = new Literal();
         literal2.setName("B");
-        literal2.setDescription("Яблоко зелёное");
+        literal2.setDescription("Яблоко ароматное");
+        literal2.setSuspect(false);
 
 
         Literal literal3 = new Literal();
         literal3.setName("C");
-        literal3.setDescription("Яблоко желтое");
+        literal3.setDescription("Яблоко вкусное");
+        literal3.setSuspect(true);
 
         Formula formula1 = new Formula();
-        formula1.setLiterals(Arrays.asList(literal1, literal2));
-        formula1.setOperators(Arrays.asList("!","&","*","*"));
+        formula1.setLiterals(Arrays.asList(literal1));
+        formula1.setOperators(Arrays.asList("*"));
         Formula formula2 = new Formula();
-        formula2.setLiterals(Arrays.asList(literal2, literal3));
-        formula2.setOperators(Arrays.asList("|","*","*"));
+        formula2.setLiterals(Arrays.asList(literal2));
+        formula2.setOperators(Arrays.asList("*"));
         Formula formula3 = new Formula();
         formula3.setLiterals(Arrays.asList(literal1, literal2, literal3));
-        formula3.setOperators(Arrays.asList("!","!","=>","*","&","*","*"));
+        formula3.setOperators(Arrays.asList("=>","&","*","*","*"));
 
         formulas.add(formula1);
         formulas.add(formula2);
         formulas.add(formula3);
 
         ResMethodController res = new ResMethodController();
-        List<List<Formula>> list = res.create(formulas);
-        for (List<Formula> formlist : list) {
-            System.out.println(formlist.size());
-           for (Formula f : formlist) {
-               System.out.println(f.getLogform());
-               System.out.println(f.getDesform());
-           }
-        }
 
-        List<List<String>> listString = res.listString();
-        for (List<String> l : listString) {
-            System.out.println("____________");
-            for (String s : l) {
-                System.out.println(s);
+        List<List<Formula>> list = res.create(formulas);
+
+//        for (List<Formula> formlist : list) {
+//            System.out.println(formlist.size());
+//           for (Formula f : formlist) {
+//               System.out.println(f.getLogform());
+//               System.out.println(f.getDesform());
+//           }
+//        }
+
+        List<List<List<String>>> listString = res.listStr();
+
+//        for (List<List<String>> l : listString) {
+//            System.out.println("____________");
+//            for (List<String> s : l) {
+//                System.out.println(s);
+//            }
+//        }
+
+        List<List<List<Literal>>> lit = res.getSteps();
+
+        for (List<List<Literal>> l : lit) {
+            System.out.println("шаг_шаг_шаг_шаг_шаг");
+            for (List<Literal> d : l) {
+                System.out.println("первый_второй_результат");
+                for (Literal s : d) {
+                    System.out.println("__________________");
+                    System.out.println(s.getName() + " " + s.getNegative());
+                }
             }
         }
 
+        List<List<String>> steps = res.listSteps();
+        for (List<String> s : steps) {
+            System.out.println("____________");
+                System.out.println(s);
+
+        }
     }
 
     @Tag("MAKE_RESOLUTION")
