@@ -53,6 +53,8 @@ public class ResMethod {
         List<Literal> begin_literal1 = new ArrayList<>();
         List<Literal> begin_literal2 = new ArrayList<>();
         List<Literal> begin_literal3 = new ArrayList<>();
+        this.solution = new ArrayList<>();
+        this.condition = new ArrayList<>();
         if (k == 0) {
             for (List<Literal> i : this.res) {
                 for (Literal j : i) {
@@ -189,8 +191,8 @@ public class ResMethod {
                 makeRes(k);
             } else {
                 this.res.clear();
-                this.condition.clear();
-                this.solution.clear();
+                //this.condition.clear();
+                //this.solution.clear();
             }
         } else {
             List<List<List<Literal>>> result = new ArrayList<>();
@@ -267,6 +269,4 @@ public class ResMethod {
 
         return false;
     }
-
-
 }
