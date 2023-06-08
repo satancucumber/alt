@@ -191,8 +191,8 @@ public class ResMethod {
                 makeRes(k);
             } else {
                 this.res.clear();
-                //this.condition.clear();
-                //this.solution.clear();
+                this.condition.clear();
+                this.solution.clear();
             }
         } else {
             List<List<List<Literal>>> result = new ArrayList<>();
